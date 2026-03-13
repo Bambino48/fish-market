@@ -1,13 +1,71 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
-generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SELLER
+  BUYER
+  ADMIN
+}
+
+enum Unit {
+  KG
+  CARTON
+  PIECE
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String   @unique
+  email     String?  @unique
+  password  String
+  role      Role     @default(BUYER)
+  city      String?
+  fishes    Fish[]
+  orders    Order[]  @relation("BuyerOrders")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Fish {
+  id          Int      @id @default(autoincrement())
+  title       String
+  species     String
+  description String?
+  price       Float
+  quantity    Float
+  unit        Unit     @default(KG)
+  imageUrl    String?
+  location    String?
+  available   Boolean  @default(true)
+  sellerId    Int
+  seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  buyerId    Int
+  fishId     Int
+  quantity   Float
+  totalPrice Float
+  status     OrderStatus @default(PENDING)
+  buyer      User        @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  fish       Fish        @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }

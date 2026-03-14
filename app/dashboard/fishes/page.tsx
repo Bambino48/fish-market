@@ -63,7 +63,7 @@ export default async function SellerFishesPage() {
                                     <strong>Lieu :</strong> {fish.location || "Non renseigné"}
                                 </p>
                                 <p>
-                                    <strong>Disponible :</strong> {fish.available ? "Oui" : "Non"}
+                                    <strong>Disponible :</strong> {fish.available ? "Oui" : "Vendu / indisponible"}
                                 </p>
                             </div>
                         ))}

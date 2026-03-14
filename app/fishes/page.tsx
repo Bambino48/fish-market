@@ -1,10 +1,61 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import FishFilters from "../components/fishes/FishFilters";
 
-export default async function FishesPage() {
+type FishesPageProps = {
+    searchParams: Promise<{
+        search?: string;
+        species?: string;
+        location?: string;
+    }>;
+};
+
+export default async function FishesPage({ searchParams }: FishesPageProps) {
+    const params = await searchParams;
+
+    const search = params.search || "";
+    const species = params.species || "";
+    const location = params.location || "";
+
     const fishes = await prisma.fish.findMany({
         where: {
             available: true,
+            AND: [
+                search
+                    ? {
+                        OR: [
+                            {
+                                title: {
+                                    contains: search,
+                                    mode: "insensitive",
+                                },
+                            },
+                            {
+                                description: {
+                                    contains: search,
+                                    mode: "insensitive",
+                                },
+                            },
+                        ],
+                    }
+                    : {},
+                species
+                    ? {
+                        species: {
+                            contains: species,
+                            mode: "insensitive",
+                        },
+                    }
+                    : {},
+                location
+                    ? {
+                        location: {
+                            contains: location,
+                            mode: "insensitive",
+                        },
+                    }
+                    : {},
+            ],
         },
         include: {
             seller: true,
@@ -16,7 +67,7 @@ export default async function FishesPage() {
 
     return (
         <main className="p-8">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
                     <h1 className="text-3xl font-bold">Poissons disponibles</h1>
                     <p className="mt-2 text-gray-600">
@@ -32,9 +83,33 @@ export default async function FishesPage() {
                 </Link>
             </div>
 
+            <FishFilters />
+
+            {(search || species || location) && (
+                <div className="mt-4 flex gap-3 flex-wrap">
+                    {search && (
+                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
+                            Recherche : {search}
+                        </span>
+                    )}
+                    {species && (
+                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
+                            Espèce : {species}
+                        </span>
+                    )}
+                    {location && (
+                        <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
+                            Lieu : {location}
+                        </span>
+                    )}
+                </div>
+            )}
+
             <div className="mt-8">
                 {fishes.length === 0 ? (
-                    <p>Aucun poisson disponible pour le moment.</p>
+                    <div className="rounded-xl border p-6">
+                        <p>Aucun poisson ne correspond à votre recherche.</p>
+                    </div>
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {fishes.map((fish) => (

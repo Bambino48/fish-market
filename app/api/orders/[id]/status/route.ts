@@ -73,20 +73,34 @@ export async function PATCH(req: Request, { params }: RouteContext) {
             );
         }
 
-        const updatedOrder = await prisma.order.update({
-            where: { id: orderId },
-            data: {
-                status,
-            },
+        const result = await prisma.$transaction(async (tx) => {
+            const updatedOrder = await tx.order.update({
+                where: { id: orderId },
+                data: {
+                    status,
+                },
+            });
+
+            if (status === "CONFIRMED") {
+                await tx.fish.update({
+                    where: { id: order.fishId },
+                    data: {
+                        available: false,
+                    },
+                });
+            }
+
+            return updatedOrder;
         });
 
         return NextResponse.json(
             {
                 message: "Statut de la commande mis à jour avec succès.",
-                order: updatedOrder,
+                order: result,
             },
             { status: 200 }
         );
+
     } catch (error) {
         console.error("UPDATE ORDER STATUS ERROR:", error);
         return NextResponse.json(

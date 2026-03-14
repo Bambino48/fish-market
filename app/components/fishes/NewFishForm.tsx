@@ -13,10 +13,10 @@ export default function NewFishForm() {
         price: "",
         quantity: "",
         unit: "KG",
-        imageUrl: "",
         location: "San Pedro",
     });
 
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -26,18 +26,48 @@ export default function NewFishForm() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0] || null;
+        setImageFile(file);
+    }
+
+    async function uploadImage() {
+        if (!imageFile) return null;
+
+        const uploadData = new FormData();
+        uploadData.append("file", imageFile);
+
+        const uploadRes = await fetch("/api/upload", {
+            method: "POST",
+            body: uploadData,
+        });
+
+        const uploadResult = await uploadRes.json();
+
+        if (!uploadRes.ok) {
+            throw new Error(uploadResult.error || "Erreur lors de l'upload image.");
+        }
+
+        return uploadResult.imageUrl as string;
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
         setMessage("");
 
         try {
+            const imageUrl = await uploadImage();
+
             const res = await fetch("/api/fishes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    imageUrl,
+                }),
             });
 
             const data = await res.json();
@@ -55,7 +85,12 @@ export default function NewFishForm() {
             }, 1000);
         } catch (error) {
             console.error(error);
-            setMessage("Erreur réseau.");
+
+            if (error instanceof Error) {
+                setMessage(error.message);
+            } else {
+                setMessage("Erreur réseau.");
+            }
         } finally {
             setLoading(false);
         }
@@ -124,11 +159,9 @@ export default function NewFishForm() {
             </select>
 
             <input
-                type="text"
-                name="imageUrl"
-                placeholder="URL image (optionnel)"
-                value={formData.imageUrl}
-                onChange={handleChange}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={handleFileChange}
                 className="w-full border rounded-lg p-3"
             />
 

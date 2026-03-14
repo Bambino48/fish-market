@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/getCurrentUser";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function SellerFishesPage() {
     const user = await getCurrentUser();
@@ -49,6 +50,17 @@ export default async function SellerFishesPage() {
                     <div className="grid gap-4 md:grid-cols-2">
                         {fishes.map((fish) => (
                             <div key={fish.id} className="border rounded-xl p-4">
+                                {fish.imageUrl && (
+                                    <div className="mb-4 overflow-hidden rounded-xl">
+                                        <Image
+                                            src={fish.imageUrl}
+                                            alt={fish.title}
+                                            width={500}
+                                            height={300}
+                                            className="h-48 w-full object-cover"
+                                        />
+                                    </div>
+                                )}
                                 <h2 className="text-xl font-semibold">{fish.title}</h2>
                                 <p className="mt-2">
                                     <strong>Espèce :</strong> {fish.species}

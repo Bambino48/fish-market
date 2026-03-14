@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import FishFilters from "../components/fishes/FishFilters";
+import Image from "next/image";
 
 type FishesPageProps = {
     searchParams: Promise<{
@@ -114,6 +115,17 @@ export default async function FishesPage({ searchParams }: FishesPageProps) {
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {fishes.map((fish) => (
                             <div key={fish.id} className="border rounded-xl p-5 shadow-sm">
+                                {fish.imageUrl && (
+                                    <div className="mb-4 overflow-hidden rounded-xl">
+                                        <Image
+                                            src={fish.imageUrl}
+                                            alt={fish.title}
+                                            width={500}
+                                            height={300}
+                                            className="h-48 w-full object-cover"
+                                        />
+                                    </div>
+                                )}
                                 <h2 className="text-xl font-semibold">{fish.title}</h2>
 
                                 <div className="mt-3 space-y-1">

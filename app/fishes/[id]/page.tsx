@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import OrderForm from "../../components/orders/OrderForm";
+import Image from "next/image";
 
 type FishDetailPageProps = {
     params: Promise<{
@@ -45,6 +46,17 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
 
             <div className="border rounded-2xl p-6 shadow-sm">
                 <h1 className="text-3xl font-bold">{fish.title}</h1>
+                {fish.imageUrl && (
+                    <div className="mt-6 overflow-hidden rounded-2xl">
+                        <Image
+                            src={fish.imageUrl}
+                            alt={fish.title}
+                            width={800}
+                            height={500}
+                            className="w-full h-80 object-cover"
+                        />
+                    </div>
+                )}
 
                 <div className="mt-6 space-y-3">
                     <p>

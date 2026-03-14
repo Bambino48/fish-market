@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/getCurrentUser";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import OrderStatusActions from "../../components/orders/OrderStatusActions";
 
 export default async function SellerSalesPage() {
     const user = await getCurrentUser();
@@ -72,6 +73,16 @@ export default async function SellerSalesPage() {
                                 <p>
                                     <strong>Statut :</strong> {order.status}
                                 </p>
+
+                                {order.status === "PENDING" && (
+                                    <OrderStatusActions orderId={order.id} />
+                                )}
+
+                                {order.status !== "PENDING" && (
+                                    <p className="mt-4 text-sm text-gray-600">
+                                        Cette commande a déjà été traitée.
+                                    </p>
+                                )}
                             </div>
                         ))}
                     </div>

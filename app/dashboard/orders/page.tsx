@@ -70,7 +70,11 @@ export default async function BuyerOrdersPage() {
                                     <strong>Montant total :</strong> {order.totalPrice} FCFA
                                 </p>
                                 <p>
-                                    <strong>Statut :</strong> {order.status}
+                                    <strong>Statut :</strong>{" "}
+                                    {order.status === "PENDING" && "En attente"}
+                                    {order.status === "CONFIRMED" && "Confirmée"}
+                                    {order.status === "CANCELLED" && "Annulée"}
+                                    {order.status === "COMPLETED" && "Terminée"}
                                 </p>
                             </div>
                         ))}

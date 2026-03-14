@@ -7,7 +7,10 @@ export async function POST(req: Request) {
         const user = await getCurrentUser();
 
         if (!user) {
-            return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+            return NextResponse.json(
+                { error: "Vous devez être connecté pour passer une commande." },
+                { status: 401 }
+            );
         }
 
         if (user.role !== "BUYER") {
@@ -18,21 +21,26 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { fishId, quantity } = body;
 
-        if (!fishId || !quantity) {
+        const numericFishId = Number(body?.fishId);
+        const numericQuantity = Number(body?.quantity);
+
+        if (!body?.fishId || !body?.quantity) {
             return NextResponse.json(
-                { error: "fishId et quantity sont obligatoires." },
+                { error: "Le poisson et la quantité sont obligatoires." },
                 { status: 400 }
             );
         }
 
-        const numericFishId = Number(fishId);
-        const numericQuantity = Number(quantity);
-
-        if (isNaN(numericFishId) || isNaN(numericQuantity) || numericQuantity <= 0) {
+        if (
+            Number.isNaN(numericFishId) ||
+            numericFishId <= 0 ||
+            Number.isNaN(numericQuantity) ||
+            numericQuantity <= 0 ||
+            !Number.isInteger(numericQuantity)
+        ) {
             return NextResponse.json(
-                { error: "Données de commande invalides." },
+                { error: "Les données de commande sont invalides." },
                 { status: 400 }
             );
         }
@@ -84,6 +92,7 @@ export async function POST(req: Request) {
         );
     } catch (error) {
         console.error("CREATE ORDER ERROR:", error);
+
         return NextResponse.json(
             { error: "Erreur serveur lors de la création de la commande." },
             { status: 500 }

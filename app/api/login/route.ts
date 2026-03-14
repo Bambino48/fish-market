@@ -6,11 +6,13 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { phone, password } = body;
+
+        const phone = body.phone?.trim();
+        const password = body.password;
 
         if (!phone || !password) {
             return NextResponse.json(
-                { error: "Téléphone et mot de passe sont obligatoires." },
+                { error: "Le téléphone et le mot de passe sont obligatoires." },
                 { status: 400 }
             );
         }
@@ -21,7 +23,7 @@ export async function POST(req: Request) {
 
         if (!user) {
             return NextResponse.json(
-                { error: "Utilisateur introuvable." },
+                { error: "Aucun compte ne correspond à ce téléphone." },
                 { status: 404 }
             );
         }
@@ -56,7 +58,7 @@ export async function POST(req: Request) {
 
         response.cookies.set("token", token, {
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
             maxAge: 60 * 60 * 24 * 7,
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
         return response;
     } catch (error) {
         console.error("LOGIN ERROR:", error);
+
         return NextResponse.json(
             { error: "Erreur serveur lors de la connexion." },
             { status: 500 }

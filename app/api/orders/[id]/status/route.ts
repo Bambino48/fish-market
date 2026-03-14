@@ -8,12 +8,18 @@ type RouteContext = {
     }>;
 };
 
+const ALLOWED_STATUSES = ["CONFIRMED", "CANCELLED"] as const;
+type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
+
 export async function PATCH(req: Request, { params }: RouteContext) {
     try {
         const user = await getCurrentUser();
 
         if (!user) {
-            return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+            return NextResponse.json(
+                { error: "Vous devez être connecté pour modifier cette commande." },
+                { status: 401 }
+            );
         }
 
         if (user.role !== "SELLER") {
@@ -26,7 +32,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
         const { id } = await params;
         const orderId = Number(id);
 
-        if (isNaN(orderId)) {
+        if (Number.isNaN(orderId) || orderId <= 0) {
             return NextResponse.json(
                 { error: "Identifiant de commande invalide." },
                 { status: 400 }
@@ -34,11 +40,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
         }
 
         const body = await req.json();
-        const { status } = body;
+        const status = body?.status as string | undefined;
 
-        const allowedStatuses = ["CONFIRMED", "CANCELLED"];
-
-        if (!allowedStatuses.includes(status)) {
+        if (!status || !ALLOWED_STATUSES.includes(status as AllowedStatus)) {
             return NextResponse.json(
                 { error: "Statut non autorisé." },
                 { status: 400 }
@@ -77,7 +81,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
             const updatedOrder = await tx.order.update({
                 where: { id: orderId },
                 data: {
-                    status,
+                    status: status as AllowedStatus,
                 },
             });
 
@@ -95,14 +99,17 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 
         return NextResponse.json(
             {
-                message: "Statut de la commande mis à jour avec succès.",
+                message:
+                    status === "CONFIRMED"
+                        ? "Commande confirmée avec succès."
+                        : "Commande annulée avec succès.",
                 order: result,
             },
             { status: 200 }
         );
-
     } catch (error) {
         console.error("UPDATE ORDER STATUS ERROR:", error);
+
         return NextResponse.json(
             { error: "Erreur serveur lors de la mise à jour du statut." },
             { status: 500 }

@@ -7,7 +7,10 @@ export async function POST(req: Request) {
         const user = await getCurrentUser();
 
         if (!user) {
-            return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+            return NextResponse.json(
+                { error: "Vous devez être connecté pour publier une annonce." },
+                { status: 401 }
+            );
         }
 
         if (user.role !== "SELLER") {
@@ -18,20 +21,42 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const {
-            title,
-            species,
-            description,
-            price,
-            quantity,
-            unit,
-            imageUrl,
-            location,
-        } = body;
 
-        if (!title || !species || !price || !quantity) {
+        const title = body.title?.trim();
+        const species = body.species?.trim();
+        const description = body.description?.trim() || null;
+        const price = Number(body.price);
+        const quantity = Number(body.quantity);
+        const unit = body.unit?.trim() || "KG";
+        const imageUrl = body.imageUrl?.trim() || null;
+        const location = body.location?.trim() || user.city || "San Pedro";
+
+        if (!title || !species || !body.price || !body.quantity) {
             return NextResponse.json(
-                { error: "Les champs obligatoires sont manquants." },
+                { error: "Les champs titre, espèce, prix et quantité sont obligatoires." },
+                { status: 400 }
+            );
+        }
+
+        if (Number.isNaN(price) || price <= 0) {
+            return NextResponse.json(
+                { error: "Le prix doit être un nombre supérieur à 0." },
+                { status: 400 }
+            );
+        }
+
+        if (Number.isNaN(quantity) || quantity <= 0) {
+            return NextResponse.json(
+                { error: "La quantité doit être un nombre supérieur à 0." },
+                { status: 400 }
+            );
+        }
+
+        const allowedUnits = ["KG", "CARTON", "PIECE"];
+
+        if (!allowedUnits.includes(unit)) {
+            return NextResponse.json(
+                { error: "L’unité sélectionnée est invalide." },
                 { status: 400 }
             );
         }
@@ -40,22 +65,26 @@ export async function POST(req: Request) {
             data: {
                 title,
                 species,
-                description: description || null,
-                price: Number(price),
-                quantity: Number(quantity),
-                unit: unit || "KG",
-                imageUrl: imageUrl || null,
-                location: location || user.city || "San Pedro",
+                description,
+                price,
+                quantity,
+                unit,
+                imageUrl,
+                location,
                 sellerId: user.id,
             },
         });
 
         return NextResponse.json(
-            { message: "Poisson ajouté avec succès.", fish },
+            {
+                message: "Poisson ajouté avec succès.",
+                fish,
+            },
             { status: 201 }
         );
     } catch (error) {
         console.error("CREATE FISH ERROR:", error);
+
         return NextResponse.json(
             { error: "Erreur serveur lors de l'ajout du poisson." },
             { status: 500 }

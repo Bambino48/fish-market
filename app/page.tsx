@@ -9,7 +9,14 @@ export default async function HomePage() {
       <h1 className="text-3xl font-bold">Fish Market San Pedro</h1>
       <p className="mt-4">MVP en cours de développement.</p>
 
-      <div className="mt-6 flex gap-4">
+      <div className="mt-6 flex gap-4 flex-wrap">
+        <Link
+          href="/fishes"
+          className="px-4 py-2 bg-orange-600 text-white rounded-lg"
+        >
+          Voir le catalogue
+        </Link>
+
         {!user ? (
           <>
             <Link

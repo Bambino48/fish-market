@@ -59,7 +59,16 @@ export default async function DashboardPage() {
                 {user.role === "BUYER" && (
                     <div>
                         <h2 className="text-xl font-semibold">Espace acheteur</h2>
-                        <p className="mt-2">Tu pourras bientôt consulter et commander du poisson.</p>
+                        <p className="mt-2">Consultez les poissons disponibles sur la plateforme.</p>
+
+                        <div className="mt-4">
+                            <Link
+                                href="/fishes"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                            >
+                                Voir le catalogue
+                            </Link>
+                        </div>
                     </div>
                 )}
 

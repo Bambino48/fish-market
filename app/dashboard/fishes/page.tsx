@@ -29,6 +29,12 @@ export default async function SellerFishesPage() {
                 <h1 className="text-3xl font-bold">Mes poissons</h1>
 
                 <Link
+                    href="/dashboard"
+                    className="px-4 py-2 bg-gray-200 rounded-lg"
+                >
+                    Retour dashboard
+                </Link>
+                <Link
                     href="/dashboard/fishes/new"
                     className="px-4 py-2 bg-black text-white rounded-lg"
                 >

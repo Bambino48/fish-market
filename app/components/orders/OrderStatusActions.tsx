@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { toast } from "sonner";
 
 type OrderStatusActionsProps = {
     orderId: number;
@@ -11,12 +13,12 @@ export default function OrderStatusActions({
     orderId,
 }: OrderStatusActionsProps) {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
+    const [loadingStatus, setLoadingStatus] = useState<
+        "CONFIRMED" | "CANCELLED" | null
+    >(null);
 
     async function updateStatus(status: "CONFIRMED" | "CANCELLED") {
-        setLoading(true);
-        setMessage("");
+        setLoadingStatus(status);
 
         try {
             const res = await fetch(`/api/orders/${orderId}/status`, {
@@ -30,12 +32,12 @@ export default function OrderStatusActions({
             const data = await res.json();
 
             if (!res.ok) {
-                setMessage(data.error || "Erreur lors de la mise à jour.");
-                setLoading(false);
+                toast.error(data.error || "Erreur lors de la mise à jour.");
+                setLoadingStatus(null);
                 return;
             }
 
-            setMessage(
+            toast.success(
                 status === "CONFIRMED"
                     ? "Commande confirmée."
                     : "Commande annulée."
@@ -44,33 +46,55 @@ export default function OrderStatusActions({
             router.refresh();
         } catch (error) {
             console.error(error);
-            setMessage("Erreur réseau.");
+            toast.error("Erreur réseau.");
         } finally {
-            setLoading(false);
+            setLoadingStatus(null);
         }
     }
 
+    const isLoading = loadingStatus !== null;
+
     return (
-        <div className="mt-4">
-            <div className="flex gap-3 flex-wrap">
+        <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-4">
+            <div className="flex flex-col gap-3 sm:flex-row">
                 <button
+                    type="button"
                     onClick={() => updateStatus("CONFIRMED")}
-                    disabled={loading}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg"
+                    disabled={isLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                    Confirmer
+                    {loadingStatus === "CONFIRMED" ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Confirmation...
+                        </>
+                    ) : (
+                        <>
+                            <CheckCircle2 className="h-4 w-4" />
+                            Confirmer
+                        </>
+                    )}
                 </button>
 
                 <button
+                    type="button"
                     onClick={() => updateStatus("CANCELLED")}
-                    disabled={loading}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                    disabled={isLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                    Refuser
+                    {loadingStatus === "CANCELLED" ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Annulation...
+                        </>
+                    ) : (
+                        <>
+                            <XCircle className="h-4 w-4" />
+                            Refuser
+                        </>
+                    )}
                 </button>
             </div>
-
-            {message && <p className="mt-3">{message}</p>}
         </div>
     );
 }

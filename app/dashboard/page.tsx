@@ -38,7 +38,7 @@ export default async function DashboardPage() {
                         <h2 className="text-xl font-semibold">Espace vendeur</h2>
                         <p className="mt-2">Gérez vos annonces de poissons.</p>
 
-                        <div className="mt-4 flex gap-4">
+                        <div className="mt-4 flex gap-4 flex-wrap">
                             <Link
                                 href="/dashboard/fishes"
                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg"
@@ -52,6 +52,13 @@ export default async function DashboardPage() {
                             >
                                 Ajouter un poisson
                             </Link>
+
+                            <Link
+                                href="/dashboard/sales"
+                                className="px-4 py-2 bg-orange-600 text-white rounded-lg"
+                            >
+                                Commandes reçues
+                            </Link>
                         </div>
                     </div>
                 )}
@@ -61,12 +68,19 @@ export default async function DashboardPage() {
                         <h2 className="text-xl font-semibold">Espace acheteur</h2>
                         <p className="mt-2">Consultez les poissons disponibles sur la plateforme.</p>
 
-                        <div className="mt-4">
+                        <div className="mt-4 flex gap-4">
                             <Link
                                 href="/fishes"
                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                             >
                                 Voir le catalogue
+                            </Link>
+
+                            <Link
+                                href="/dashboard/orders"
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg"
+                            >
+                                Mes commandes
                             </Link>
                         </div>
                     </div>

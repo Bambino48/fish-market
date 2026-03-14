@@ -26,17 +26,18 @@ enum OrderStatus {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  phone     String   @unique
-  email     String?  @unique
-  password  String
-  role      Role     @default(BUYER)
-  city      String?
-  fishes    Fish[]
-  orders    Order[]  @relation("BuyerOrders")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String
+  phone       String   @unique
+  email       String?  @unique
+  password    String
+  role        Role     @default(BUYER)
+  city        String?
+  fishes      Fish[]
+  orders      Order[]  @relation("BuyerOrders")
+  salesOrders Order[]  @relation("SellerOrders")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Fish {
@@ -60,11 +61,13 @@ model Fish {
 model Order {
   id         Int         @id @default(autoincrement())
   buyerId    Int
+  sellerId   Int
   fishId     Int
   quantity   Float
   totalPrice Float
   status     OrderStatus @default(PENDING)
   buyer      User        @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller     User        @relation("SellerOrders", fields: [sellerId], references: [id], onDelete: Cascade)
   fish       Fish        @relation(fields: [fishId], references: [id], onDelete: Cascade)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt

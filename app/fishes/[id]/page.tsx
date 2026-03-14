@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/getCurrentUser";
+import OrderForm from "../../components/orders/OrderForm";
 
 type FishDetailPageProps = {
     params: Promise<{
@@ -29,6 +31,8 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
     if (!fish || !fish.available) {
         notFound();
     }
+
+    const user = await getCurrentUser();
 
     return (
         <main className="max-w-3xl mx-auto p-8">
@@ -70,11 +74,35 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
                     </p>
                 </div>
 
-                <div className="mt-8">
-                    <button className="px-5 py-3 bg-green-600 text-white rounded-lg">
-                        Commander bientôt
-                    </button>
-                </div>
+                {!user && (
+                    <div className="mt-8">
+                        <p className="mb-3">Connectez-vous comme acheteur pour commander.</p>
+                        <Link
+                            href="/login"
+                            className="px-5 py-3 bg-black text-white rounded-lg"
+                        >
+                            Se connecter
+                        </Link>
+                    </div>
+                )}
+
+                {user?.role === "BUYER" && <OrderForm fishId={fish.id} fishTitle={fish.title} />}
+
+                {user?.role === "SELLER" && (
+                    <div className="mt-8">
+                        <p className="text-gray-700">
+                            Les vendeurs ne peuvent pas commander depuis cette page.
+                        </p>
+                    </div>
+                )}
+
+                {user?.role === "ADMIN" && (
+                    <div className="mt-8">
+                        <p className="text-gray-700">
+                            Compte administrateur connecté.
+                        </p>
+                    </div>
+                )}
             </div>
         </main>
     );

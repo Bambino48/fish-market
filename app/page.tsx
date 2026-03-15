@@ -3,20 +3,125 @@ import { getSessionUser } from "@/lib/auth";
 import {
   ArrowRight,
   BadgeCheck,
+  Building2,
+  CheckCircle2,
   ClipboardList,
+  Clock3,
   FishSymbol,
+  HelpCircle,
+  Layers3,
   MapPin,
   ShieldCheck,
   ShoppingBasket,
   Store,
   UserPlus,
-  Layers3,
-  Clock3,
   Users,
-  CheckCircle2,
-  Building2,
-  HelpCircle,
+  Star,
+  MessageCircle,
+  TrendingUp,
+  Waves,
 } from "lucide-react";
+
+const featuredFishes = [
+  {
+    title: "Thon frais de San Pedro",
+    price: "15 000 FCFA",
+    location: "San Pedro",
+    seller: "Ibrahim Sea Market",
+    species: "Thon",
+  },
+  {
+    title: "Capitaine bien préparé",
+    price: "12 500 FCFA",
+    location: "Grand-Béréby",
+    seller: "Océan Plus",
+    species: "Capitaine",
+  },
+  {
+    title: "Crevettes roses",
+    price: "8 000 FCFA",
+    location: "San Pedro",
+    seller: "Lagune Fraîcheur",
+    species: "Crevette",
+  },
+];
+
+const marketStats = [
+  {
+    label: "Poissons disponibles",
+    value: "48+",
+    desc: "annonces visibles aujourd’hui",
+    icon: FishSymbol,
+    tone: "bg-sky-100 text-sky-700",
+  },
+  {
+    label: "Vendeurs actifs",
+    value: "12+",
+    desc: "vendeurs présents sur la plateforme",
+    icon: Store,
+    tone: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    label: "Commandes suivies",
+    value: "23+",
+    desc: "transactions récentes organisées",
+    icon: ClipboardList,
+    tone: "bg-orange-100 text-orange-700",
+  },
+  {
+    label: "Conversations ouvertes",
+    value: "17+",
+    desc: "échanges entre acheteurs et vendeurs",
+    icon: MessageCircle,
+    tone: "bg-violet-100 text-violet-700",
+  },
+];
+
+const trustedPoints = [
+  {
+    title: "Profils vendeurs identifiés",
+    desc: "Chaque vendeur dispose d’un compte avec ses informations visibles pour faciliter les échanges.",
+    icon: BadgeCheck,
+    tone: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    title: "Contact direct",
+    desc: "Les acheteurs peuvent poser leurs questions via la messagerie avant de commander.",
+    icon: MessageCircle,
+    tone: "bg-sky-100 text-sky-700",
+  },
+  {
+    title: "Suivi structuré",
+    desc: "Les commandes et conversations sont regroupées dans des espaces dédiés.",
+    icon: ShieldCheck,
+    tone: "bg-violet-100 text-violet-700",
+  },
+];
+
+const testimonials = [
+  {
+    name: "Restaurant Océan Bleu",
+    quote:
+      "Nous trouvons plus rapidement des vendeurs disponibles et les échanges sont beaucoup plus simples.",
+  },
+  {
+    name: "Vendeur local de San Pedro",
+    quote:
+      "La plateforme me permet de publier mes poissons clairement et de répondre vite aux acheteurs.",
+  },
+  {
+    name: "Acheteuse régulière",
+    quote:
+      "J’aime pouvoir consulter les annonces et poser une question avant de commander.",
+  },
+];
+
+const zones = [
+  { name: "San Pedro", info: "Zone principale du marché", tone: "bg-sky-50 text-sky-700" },
+  { name: "Grand-Béréby", info: "Vendeurs côtiers disponibles", tone: "bg-emerald-50 text-emerald-700" },
+  { name: "Tabou", info: "Extension future du réseau", tone: "bg-orange-50 text-orange-700" },
+  { name: "Sassandra", info: "Zone à fort potentiel", tone: "bg-violet-50 text-violet-700" },
+];
 
 export default async function HomePage() {
   const user = await getSessionUser();
@@ -24,7 +129,7 @@ export default async function HomePage() {
   return (
     <main className="bg-slate-50">
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-sm font-medium text-orange-700">
               <FishSymbol className="h-4 w-4" />
@@ -189,6 +294,117 @@ export default async function HomePage() {
 
       <section className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
+                Poissons populaires aujourd’hui
+              </p>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+                Un aperçu du marché local
+              </h2>
+              <p className="mt-4 text-base leading-7 text-slate-600">
+                Donnez immédiatement envie à l’utilisateur d’explorer le
+                catalogue avec des annonces concrètes et lisibles.
+              </p>
+            </div>
+
+            <Link
+              href="/fishes"
+              className="inline-flex w-fit items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100"
+            >
+              <ArrowRight className="h-4 w-4" />
+              Voir toutes les annonces
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {featuredFishes.map((fish) => (
+              <div
+                key={fish.title}
+                className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+                    <FishSymbol className="h-3.5 w-3.5" />
+                    {fish.species}
+                  </span>
+                  <span className="text-sm font-semibold text-orange-600">
+                    {fish.price}
+                  </span>
+                </div>
+
+                <h3 className="mt-4 text-xl font-semibold text-slate-900">
+                  {fish.title}
+                </h3>
+
+                <div className="mt-4 space-y-2 text-sm text-slate-600">
+                  <p className="inline-flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-slate-400" />
+                    {fish.location}
+                  </p>
+                  <p className="inline-flex items-center gap-2">
+                    <Store className="h-4 w-4 text-slate-400" />
+                    {fish.seller}
+                  </p>
+                </div>
+
+                <div className="mt-5">
+                  <Link
+                    href="/fishes"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-sky-700 transition hover:text-sky-800"
+                  >
+                    Explorer le catalogue
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
+            Marché en direct
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+            Une plateforme qui donne le sentiment d’un marché actif
+          </h2>
+          <p className="mt-4 text-base leading-7 text-slate-600">
+            Affichez l’activité du marché pour renforcer la crédibilité et
+            montrer qu’il se passe réellement quelque chose sur la plateforme.
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {marketStats.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.label}
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+              >
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.tone}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <p className="mt-4 text-3xl font-bold tracking-tight text-slate-900">
+                  {item.value}
+                </p>
+                <h3 className="mt-2 text-lg font-semibold text-slate-900">
+                  {item.label}
+                </h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600">
+                  {item.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
               Comment ça marche
@@ -319,50 +535,155 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
-              Pour qui
+              Pourquoi nous faire confiance
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
-              Une plateforme utile pour plusieurs types d’utilisateurs
+              Des signaux de confiance utiles pour une marketplace locale
             </h2>
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-orange-700">
-                <Store className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-slate-900">
-                Vendeurs
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-slate-600">
-                Publiez vos offres, mettez en valeur vos produits et gérez vos commandes.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
-                <Building2 className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-slate-900">
-                Restaurants et hôtels
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-slate-600">
-                Trouvez rapidement les produits disponibles pour vos besoins professionnels.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-                <ShoppingBasket className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-slate-900">
-                Acheteurs
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-slate-600">
-                Consultez les offres, commandez et suivez facilement vos achats.
-              </p>
-            </div>
+            {trustedPoints.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.title}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+                >
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.tone}`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">
+                    {item.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
+            Pour qui
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+            Une plateforme utile pour plusieurs types d’utilisateurs
+          </h2>
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-orange-700">
+              <Store className="h-5 w-5" />
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-slate-900">
+              Vendeurs
+            </h3>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              Publiez vos offres, mettez en valeur vos produits et gérez vos commandes.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+              <Building2 className="h-5 w-5" />
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-slate-900">
+              Restaurants et hôtels
+            </h3>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              Trouvez rapidement les produits disponibles pour vos besoins professionnels.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+              <ShoppingBasket className="h-5 w-5" />
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-slate-900">
+              Acheteurs
+            </h3>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              Consultez les offres, commandez et suivez facilement vos achats.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
+              Avis utilisateurs
+            </p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+              Une preuve sociale qui rassure
+            </h2>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {testimonials.map((item) => (
+              <div
+                key={item.name}
+                className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+              >
+                <div className="flex items-center gap-1 text-orange-500">
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                </div>
+
+                <p className="mt-4 text-sm leading-7 text-slate-600">
+                  “{item.quote}”
+                </p>
+
+                <p className="mt-4 text-sm font-semibold text-slate-900">
+                  {item.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-700">
+            Zones desservies
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+            Une présence pensée pour le marché côtier local
+          </h2>
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {zones.map((zone) => (
+            <div
+              key={zone.name}
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ${zone.tone}`}>
+                <Waves className="h-4 w-4" />
+                {zone.name}
+              </div>
+
+              <p className="mt-4 text-sm leading-7 text-slate-600">
+                {zone.info}
+              </p>
+
+              <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-500">
+                <TrendingUp className="h-4 w-4" />
+                Zone stratégique
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -378,7 +699,7 @@ export default async function HomePage() {
               </h2>
               <p className="mt-4 text-sm leading-7 text-white/80 sm:text-base">
                 Explorez le catalogue ou créez votre espace pour profiter d’un
-                parcours simple et structuré.
+                parcours simple, structuré et plus proche du marché réel.
               </p>
             </div>
 

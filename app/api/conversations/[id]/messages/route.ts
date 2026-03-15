@@ -2,90 +2,67 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 
-export async function POST(req: Request) {
+type RouteContext = {
+    params: Promise<{
+        id: string;
+    }>;
+};
+
+export async function POST(req: Request, { params }: RouteContext) {
     try {
         const user = await getCurrentUser();
 
         if (!user) {
             return NextResponse.json(
-                { error: "Vous devez être connecté pour envoyer un message." },
+                { error: "Vous devez être connecté pour répondre à cette conversation." },
                 { status: 401 }
             );
         }
 
-        const body = await req.json();
+        const { id } = await params;
+        const conversationId = Number(id);
 
-        const fishId = Number(body?.fishId);
+        if (Number.isNaN(conversationId) || conversationId <= 0) {
+            return NextResponse.json(
+                { error: "Identifiant de conversation invalide." },
+                { status: 400 }
+            );
+        }
+
+        const body = await req.json();
         const content = body?.content?.trim();
 
-        if (!body?.fishId || !content) {
+        if (!content) {
             return NextResponse.json(
-                { error: "Le poisson et le contenu du message sont obligatoires." },
+                { error: "Le contenu du message est obligatoire." },
                 { status: 400 }
             );
         }
 
-        if (Number.isNaN(fishId) || fishId <= 0) {
-            return NextResponse.json(
-                { error: "Identifiant de poisson invalide." },
-                { status: 400 }
-            );
-        }
-
-        const fish = await prisma.fish.findUnique({
-            where: { id: fishId },
+        const conversation = await prisma.conversation.findUnique({
+            where: { id: conversationId },
         });
 
-        if (!fish) {
+        if (!conversation) {
             return NextResponse.json(
-                { error: "Poisson introuvable." },
+                { error: "Conversation introuvable." },
                 { status: 404 }
             );
         }
 
-        if (user.role === "SELLER") {
-            return NextResponse.json(
-                { error: "Le vendeur doit répondre depuis une conversation existante." },
-                { status: 400 }
-            );
-        }
+        const isAllowed =
+            conversation.buyerId === user.id || conversation.sellerId === user.id;
 
-        if (user.role !== "BUYER") {
+        if (!isAllowed) {
             return NextResponse.json(
-                { error: "Rôle non autorisé pour cette action." },
+                { error: "Accès interdit à cette conversation." },
                 { status: 403 }
             );
         }
 
-        if (fish.sellerId === user.id) {
-            return NextResponse.json(
-                { error: "Vous ne pouvez pas vous envoyer un message à propos de votre propre annonce." },
-                { status: 400 }
-            );
-        }
-
-        const buyerId = user.id;
-        const sellerId = fish.sellerId;
-
-        const conversation = await prisma.conversation.upsert({
-            where: {
-                fishId_buyerId_sellerId: {
-                    fishId: fish.id,
-                    buyerId,
-                    sellerId,
-                },
-            },
-            update: {},
-            create: {
-                fishId: fish.id,
-                buyerId,
-                sellerId,
-            },
-        });
-
         const message = await prisma.message.create({
             data: {
-                conversationId: conversation.id,
+                conversationId,
                 senderId: user.id,
                 content,
             },
@@ -93,17 +70,16 @@ export async function POST(req: Request) {
 
         return NextResponse.json(
             {
-                message: "Message envoyé avec succès.",
-                conversationId: conversation.id,
+                message: "Réponse envoyée avec succès.",
                 data: message,
             },
             { status: 201 }
         );
     } catch (error) {
-        console.error("SEND MESSAGE ERROR:", error);
+        console.error("REPLY MESSAGE ERROR:", error);
 
         return NextResponse.json(
-            { error: "Erreur serveur lors de l'envoi du message." },
+            { error: "Erreur serveur lors de l'envoi de la réponse." },
             { status: 500 }
         );
     }

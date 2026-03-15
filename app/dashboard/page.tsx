@@ -48,7 +48,7 @@ function getRoleDescription(role: string) {
         case "BUYER":
             return "Consultez le catalogue, passez vos commandes, échangez avec les vendeurs et retrouvez facilement vos achats.";
         case "ADMIN":
-            return "Supervisez la plateforme, les utilisateurs et les opérations principales.";
+            return "Supervisez la plateforme, les utilisateurs, les annonces, les commandes et l’activité globale.";
         default:
             return "Bienvenue sur votre espace personnel.";
     }
@@ -140,10 +140,13 @@ export default async function DashboardPage() {
                             )}
 
                             {user.role === "ADMIN" && (
-                                <div className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white">
+                                <Link
+                                    href="/admin"
+                                    className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                                >
                                     <ShieldCheck className="h-4 w-4" />
-                                    Panneau d’administration en préparation
-                                </div>
+                                    Ouvrir l’administration
+                                </Link>
                             )}
                         </div>
                     </div>
@@ -457,19 +460,146 @@ export default async function DashboardPage() {
                     )}
 
                     {user.role === "ADMIN" && (
-                        <div className="mt-8 rounded-2xl border bg-white p-6 shadow-sm">
-                            <h2 className="text-xl font-semibold">Espace administrateur</h2>
-                            <p className="mt-2 text-gray-600">
-                                Gérez les utilisateurs, annonces, commandes et conversations.
-                            </p>
+                        <div>
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <h2 className="text-2xl font-bold tracking-tight">
+                                        Espace administrateur
+                                    </h2>
+                                    <p className="mt-1 text-slate-600">
+                                        Supervisez la plateforme, suivez l’activité globale et accédez
+                                        à votre panneau d’administration complet.
+                                    </p>
+                                </div>
 
-                            <div className="mt-4">
+                                <span className="inline-flex w-fit rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700">
+                                    Accès administrateur actif
+                                </span>
+                            </div>
+
+                            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                                 <Link
                                     href="/admin"
-                                    className="rounded-xl bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-50 md:col-span-2"
                                 >
-                                    Ouvrir le dashboard admin
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+                                        <ShieldCheck className="h-5 w-5" />
+                                    </div>
+
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Ouvrir le dashboard admin
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Accédez à la vue générale de la plateforme pour piloter les
+                                        utilisateurs, annonces, commandes, revenus et conversations.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-violet-700">
+                                        Ouvrir →
+                                    </p>
                                 </Link>
+
+                                <Link
+                                    href="/admin/users"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
+                                        <UserRound className="h-5 w-5" />
+                                    </div>
+
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Utilisateurs
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Consultez les comptes acheteurs, vendeurs et administrateurs.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-sky-700">
+                                        Gérer →
+                                    </p>
+                                </Link>
+
+                                <Link
+                                    href="/admin/orders"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-orange-300 hover:bg-orange-50"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
+                                        <ClipboardList className="h-5 w-5" />
+                                    </div>
+
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Commandes
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Suivez l’ensemble des transactions et leur état global.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-orange-700">
+                                        Superviser →
+                                    </p>
+                                </Link>
+                            </div>
+
+                            <div className="mt-6 grid gap-4 md:grid-cols-3">
+                                <Link
+                                    href="/admin/fishes"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                                        <FishSymbol className="h-5 w-5" />
+                                    </div>
+
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Annonces
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Visualisez toutes les annonces publiées et leur disponibilité.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-emerald-700">
+                                        Voir →
+                                    </p>
+                                </Link>
+
+                                <Link
+                                    href="/admin/conversations"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-50"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+                                        <MessageCircle className="h-5 w-5" />
+                                    </div>
+
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Conversations
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Contrôlez les échanges entre acheteurs et vendeurs.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-violet-700">
+                                        Ouvrir →
+                                    </p>
+                                </Link>
+
+                                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-200 text-slate-700">
+                                        <BadgeCheck className="h-5 w-5" />
+                                    </div>
+
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Pilotage global
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Utilisez votre espace admin comme point d’entrée principal pour
+                                        superviser Fish Market.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                                <h3 className="text-base font-semibold text-slate-900">
+                                    Recommandations administrateur
+                                </h3>
+                                <ul className="mt-3 space-y-2 text-sm text-slate-600">
+                                    <li>• Consultez régulièrement les commandes et conversations récentes.</li>
+                                    <li>• Vérifiez l’évolution des annonces disponibles sur la plateforme.</li>
+                                    <li>• Utilisez le dashboard admin comme point central de supervision.</li>
+                                </ul>
                             </div>
                         </div>
                     )}

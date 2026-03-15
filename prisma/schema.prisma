@@ -25,41 +25,54 @@ enum OrderStatus {
   COMPLETED
 }
 
+enum VerificationStatus {
+  NOT_SUBMITTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
-  id          Int      @id @default(autoincrement())
-  name        String
-  phone       String   @unique
-  email       String?  @unique
-  password    String
-  role        Role     @default(BUYER)
-  city        String?
-  fishes      Fish[]
-  orders      Order[]  @relation("BuyerOrders")
-  salesOrders Order[]  @relation("SellerOrders")
-  buyerConversations   Conversation[] @relation("BuyerConversations")
-  sellerConversations  Conversation[] @relation("SellerConversations")
-  sentMessages         Message[]      @relation("UserMessages")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    Int                 @id @default(autoincrement())
+  name                  String
+  phone                 String              @unique
+  email                 String?             @unique
+  password              String
+  role                  Role                @default(BUYER)
+  city                  String?
+  profileImageUrl       String?
+  isVerified            Boolean             @default(false)
+  verificationStatus    VerificationStatus  @default(NOT_SUBMITTED)
+
+  fishes                Fish[]
+  orders                Order[]             @relation("BuyerOrders")
+  salesOrders           Order[]             @relation("SellerOrders")
+  buyerConversations    Conversation[]      @relation("BuyerConversations")
+  sellerConversations   Conversation[]      @relation("SellerConversations")
+  sentMessages          Message[]           @relation("UserMessages")
+  verificationDocuments VerificationDocument[]
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
 }
 
 model Fish {
-  id          Int      @id @default(autoincrement())
-  title       String
-  species     String
-  description String?
-  price       Float
-  quantity    Float
-  unit        Unit     @default(KG)
-  imageUrl    String?
-  location    String?
-  available   Boolean  @default(true)
-  sellerId    Int
-  seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  orders      Order[]
-  conversations Conversation[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             Int            @id @default(autoincrement())
+  title          String
+  species        String
+  description    String?
+  price          Float
+  quantity       Float
+  unit           Unit           @default(KG)
+  imageUrl       String?
+  location       String?
+  available      Boolean        @default(true)
+  sellerId       Int
+  seller         User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orders         Order[]
+  conversations  Conversation[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Order {
@@ -79,15 +92,15 @@ model Order {
 
 model Conversation {
   id         Int       @id @default(autoincrement())
-  fishId      Int
-  buyerId     Int
-  sellerId    Int
-  messages    Message[]
-  fish        Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
-  buyer       User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
-  seller      User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  fishId     Int
+  buyerId    Int
+  sellerId   Int
+  messages   Message[]
+  fish       Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  buyer      User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller     User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@unique([fishId, buyerId, sellerId])
 }
@@ -100,4 +113,16 @@ model Message {
   conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sender          User          @relation("UserMessages", fields: [senderId], references: [id], onDelete: Cascade)
   createdAt       DateTime      @default(now())
+}
+
+model VerificationDocument {
+  id         Int                @id @default(autoincrement())
+  userId     Int
+  fileUrl    String
+  fileType   String
+  status     VerificationStatus @default(PENDING)
+  note       String?
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
 }

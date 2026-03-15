@@ -36,6 +36,9 @@ model User {
   fishes      Fish[]
   orders      Order[]  @relation("BuyerOrders")
   salesOrders Order[]  @relation("SellerOrders")
+  buyerConversations   Conversation[] @relation("BuyerConversations")
+  sellerConversations  Conversation[] @relation("SellerConversations")
+  sentMessages         Message[]      @relation("UserMessages")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -54,6 +57,7 @@ model Fish {
   sellerId    Int
   seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   orders      Order[]
+  conversations Conversation[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -71,4 +75,29 @@ model Order {
   fish       Fish        @relation(fields: [fishId], references: [id], onDelete: Cascade)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+}
+
+model Conversation {
+  id         Int       @id @default(autoincrement())
+  fishId      Int
+  buyerId     Int
+  sellerId    Int
+  messages    Message[]
+  fish        Fish      @relation(fields: [fishId], references: [id], onDelete: Cascade)
+  buyer       User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller      User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([fishId, buyerId, sellerId])
+}
+
+model Message {
+  id              Int           @id @default(autoincrement())
+  conversationId  Int
+  senderId        Int
+  content         String
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender          User          @relation("UserMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
 }

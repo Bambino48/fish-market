@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import OrderForm from "../../components/orders/OrderForm";
 import Image from "next/image";
+import StartConversationForm from "../../components/messages/StartConversationForm";
 import {
     ArrowLeft,
     BadgeCheck,
@@ -17,6 +18,7 @@ import {
     ShieldCheck,
     ShoppingBasket,
     Info,
+    MessageCircle,
 } from "lucide-react";
 
 type FishDetailPageProps = {
@@ -237,13 +239,13 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
                                         </h3>
                                         <p className="mt-1 text-sm leading-6 text-slate-600">
                                             Connectez-vous avec un compte acheteur pour passer votre
-                                            commande.
+                                            commande ou contacter le vendeur.
                                         </p>
 
                                         <div className="mt-5 rounded-3xl bg-slate-50 p-5">
                                             <p className="text-sm leading-6 text-slate-700">
                                                 Vous devez être connecté comme acheteur pour commander ce
-                                                poisson depuis la plateforme.
+                                                poisson depuis la plateforme ou démarrer une conversation.
                                             </p>
 
                                             <div className="mt-4">
@@ -262,25 +264,47 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
                         )}
 
                         {user?.role === "BUYER" && (
-                            <div className="rounded-4xl border border-slate-200 bg-white p-6 shadow-sm">
-                                <div className="mb-5 flex items-start gap-4">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-                                        <ShoppingBasket className="h-5 w-5" />
+                            <>
+                                <div className="rounded-4xl border border-slate-200 bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-start gap-4">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                                            <ShoppingBasket className="h-5 w-5" />
+                                        </div>
+
+                                        <div>
+                                            <h3 className="text-xl font-bold tracking-tight text-slate-900">
+                                                Passer une commande
+                                            </h3>
+                                            <p className="mt-1 text-sm leading-6 text-slate-600">
+                                                Complétez le formulaire ci-dessous pour commander ce
+                                                poisson.
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <h3 className="text-xl font-bold tracking-tight text-slate-900">
-                                            Passer une commande
-                                        </h3>
-                                        <p className="mt-1 text-sm leading-6 text-slate-600">
-                                            Complétez le formulaire ci-dessous pour commander ce
-                                            poisson.
-                                        </p>
-                                    </div>
+                                    <OrderForm fishId={fish.id} fishTitle={fish.title} />
                                 </div>
 
-                                <OrderForm fishId={fish.id} fishTitle={fish.title} />
-                            </div>
+                                <div className="rounded-4xl border border-slate-200 bg-white p-6 shadow-sm">
+                                    <div className="mb-5 flex items-start gap-4">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+                                            <MessageCircle className="h-5 w-5" />
+                                        </div>
+
+                                        <div>
+                                            <h3 className="text-xl font-bold tracking-tight text-slate-900">
+                                                Contacter le vendeur
+                                            </h3>
+                                            <p className="mt-1 text-sm leading-6 text-slate-600">
+                                                Démarrez une conversation si vous souhaitez poser une
+                                                question avant de commander.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <StartConversationForm fishId={fish.id} />
+                                </div>
+                            </>
                         )}
 
                         {user?.role === "SELLER" && (
@@ -324,7 +348,8 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
 
                                         <div className="mt-4 rounded-3xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
                                             L’administration peut superviser la plateforme, mais ce
-                                            compte n’est pas destiné à commander depuis cette page.
+                                            compte n’est pas destiné à commander ou démarrer une
+                                            conversation depuis cette page.
                                         </div>
                                     </div>
                                 </div>

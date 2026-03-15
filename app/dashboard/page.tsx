@@ -7,6 +7,7 @@ import {
     ClipboardList,
     FishSymbol,
     MapPin,
+    MessageCircle,
     Phone,
     Plus,
     ScanSearch,
@@ -43,9 +44,9 @@ function getRoleLabel(role: string) {
 function getRoleDescription(role: string) {
     switch (role) {
         case "SELLER":
-            return "Gérez vos annonces, suivez vos ventes et développez votre activité sur Fish Market.";
+            return "Gérez vos annonces, suivez vos ventes, échangez avec les acheteurs et développez votre activité sur Fish Market.";
         case "BUYER":
-            return "Consultez le catalogue, passez vos commandes et retrouvez facilement vos achats.";
+            return "Consultez le catalogue, passez vos commandes, échangez avec les vendeurs et retrouvez facilement vos achats.";
         case "ADMIN":
             return "Supervisez la plateforme, les utilisateurs et les opérations principales.";
         default:
@@ -99,6 +100,14 @@ export default async function DashboardPage() {
                                         <FishSymbol className="h-4 w-4" />
                                         Voir mes annonces
                                     </Link>
+
+                                    <Link
+                                        href="/dashboard/messages"
+                                        className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                                    >
+                                        <MessageCircle className="h-4 w-4" />
+                                        Messages
+                                    </Link>
                                 </>
                             )}
 
@@ -118,6 +127,14 @@ export default async function DashboardPage() {
                                     >
                                         <ClipboardList className="h-4 w-4" />
                                         Mes commandes
+                                    </Link>
+
+                                    <Link
+                                        href="/dashboard/messages"
+                                        className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                                    >
+                                        <MessageCircle className="h-4 w-4" />
+                                        Messages
                                     </Link>
                                 </>
                             )}
@@ -197,21 +214,26 @@ export default async function DashboardPage() {
                                 <p className="inline-flex items-center gap-2 text-slate-600">
                                     <UserRound className="h-4 w-4 text-slate-500" />
                                     <span>
-                                        <span className="font-semibold text-slate-700">Nom :</span> {user.name}
+                                        <span className="font-semibold text-slate-700">Nom :</span>{" "}
+                                        {user.name}
                                     </span>
                                 </p>
 
                                 <p className="inline-flex items-center gap-2 text-slate-600">
                                     <Phone className="h-4 w-4 text-slate-500" />
                                     <span>
-                                        <span className="font-semibold text-slate-700">Téléphone :</span> {user.phone}
+                                        <span className="font-semibold text-slate-700">
+                                            Téléphone :
+                                        </span>{" "}
+                                        {user.phone}
                                     </span>
                                 </p>
 
                                 <p className="inline-flex items-center gap-2 text-slate-600">
                                     <Store className="h-4 w-4 text-slate-500" />
                                     <span>
-                                        <span className="font-semibold text-slate-700">Rôle :</span> {roleLabel}
+                                        <span className="font-semibold text-slate-700">Rôle :</span>{" "}
+                                        {roleLabel}
                                     </span>
                                 </p>
 
@@ -250,7 +272,8 @@ export default async function DashboardPage() {
                                         Espace vendeur
                                     </h2>
                                     <p className="mt-1 text-slate-600">
-                                        Gérez vos annonces de poissons et suivez vos activités.
+                                        Gérez vos annonces, suivez vos commandes et échangez avec vos
+                                        acheteurs.
                                     </p>
                                 </div>
 
@@ -259,7 +282,7 @@ export default async function DashboardPage() {
                                 </span>
                             </div>
 
-                            <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                            <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                                 <Link
                                     href="/dashboard/fishes"
                                     className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50"
@@ -298,7 +321,7 @@ export default async function DashboardPage() {
 
                                 <Link
                                     href="/dashboard/sales"
-                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-orange-300 hover:bg-orange-50 sm:col-span-2 xl:col-span-1"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-orange-300 hover:bg-orange-50"
                                 >
                                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
                                         <ClipboardList className="h-5 w-5" />
@@ -313,6 +336,24 @@ export default async function DashboardPage() {
                                         Consulter →
                                     </p>
                                 </Link>
+
+                                <Link
+                                    href="/dashboard/messages"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-50"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+                                        <MessageCircle className="h-5 w-5" />
+                                    </div>
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Messages
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Répondez aux acheteurs et suivez vos conversations.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-violet-700">
+                                        Ouvrir →
+                                    </p>
+                                </Link>
                             </div>
 
                             <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
@@ -322,7 +363,7 @@ export default async function DashboardPage() {
                                 <ul className="mt-3 space-y-2 text-sm text-slate-600">
                                     <li>• Ajoutez des annonces claires avec des informations complètes.</li>
                                     <li>• Vérifiez régulièrement vos commandes reçues.</li>
-                                    <li>• Gardez vos disponibilités à jour pour une meilleure confiance.</li>
+                                    <li>• Répondez rapidement aux messages des acheteurs.</li>
                                 </ul>
                             </div>
                         </div>
@@ -336,7 +377,8 @@ export default async function DashboardPage() {
                                         Espace acheteur
                                     </h2>
                                     <p className="mt-1 text-slate-600">
-                                        Explorez le catalogue et suivez vos commandes en toute simplicité.
+                                        Explorez le catalogue, suivez vos commandes et échangez avec
+                                        les vendeurs.
                                     </p>
                                 </div>
 
@@ -345,7 +387,7 @@ export default async function DashboardPage() {
                                 </span>
                             </div>
 
-                            <div className="mt-6 grid gap-4 md:grid-cols-2">
+                            <div className="mt-6 grid gap-4 md:grid-cols-3">
                                 <Link
                                     href="/fishes"
                                     className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50"
@@ -381,6 +423,24 @@ export default async function DashboardPage() {
                                         Consulter →
                                     </p>
                                 </Link>
+
+                                <Link
+                                    href="/dashboard/messages"
+                                    className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-50"
+                                >
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+                                        <MessageCircle className="h-5 w-5" />
+                                    </div>
+                                    <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                                        Messages
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                                        Suivez vos échanges avec les vendeurs avant ou après commande.
+                                    </p>
+                                    <p className="mt-4 text-sm font-semibold text-violet-700">
+                                        Ouvrir →
+                                    </p>
+                                </Link>
                             </div>
 
                             <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
@@ -390,7 +450,7 @@ export default async function DashboardPage() {
                                 <ul className="mt-3 space-y-2 text-sm text-slate-600">
                                     <li>• Comparez les offres avant de commander.</li>
                                     <li>• Vérifiez la localisation du vendeur.</li>
-                                    <li>• Suivez vos commandes depuis votre espace personnel.</li>
+                                    <li>• Utilisez la messagerie pour poser vos questions.</li>
                                 </ul>
                             </div>
                         </div>

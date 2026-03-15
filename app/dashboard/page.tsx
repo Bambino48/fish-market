@@ -457,52 +457,19 @@ export default async function DashboardPage() {
                     )}
 
                     {user.role === "ADMIN" && (
-                        <div>
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                                <div>
-                                    <h2 className="text-2xl font-bold tracking-tight">
-                                        Espace administrateur
-                                    </h2>
-                                    <p className="mt-1 text-slate-600">
-                                        Cet espace pourra bientôt centraliser la gestion complète de la plateforme.
-                                    </p>
-                                </div>
+                        <div className="mt-8 rounded-2xl border bg-white p-6 shadow-sm">
+                            <h2 className="text-xl font-semibold">Espace administrateur</h2>
+                            <p className="mt-2 text-gray-600">
+                                Gérez les utilisateurs, annonces, commandes et conversations.
+                            </p>
 
-                                <span className="inline-flex w-fit rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-700">
-                                    Administration
-                                </span>
-                            </div>
-
-                            <div className="mt-6 grid gap-4 md:grid-cols-3">
-                                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
-                                        <UserRound className="h-5 w-5" />
-                                    </div>
-                                    <h3 className="mt-4 text-lg font-semibold">Utilisateurs</h3>
-                                    <p className="mt-2 text-sm text-slate-600">
-                                        Gestion des comptes vendeurs et acheteurs à venir.
-                                    </p>
-                                </div>
-
-                                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
-                                        <FishSymbol className="h-5 w-5" />
-                                    </div>
-                                    <h3 className="mt-4 text-lg font-semibold">Annonces</h3>
-                                    <p className="mt-2 text-sm text-slate-600">
-                                        Supervision des annonces publiées sur la plateforme.
-                                    </p>
-                                </div>
-
-                                <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-700">
-                                        <ClipboardList className="h-5 w-5" />
-                                    </div>
-                                    <h3 className="mt-4 text-lg font-semibold">Commandes</h3>
-                                    <p className="mt-2 text-sm text-slate-600">
-                                        Suivi global des transactions et des opérations.
-                                    </p>
-                                </div>
+                            <div className="mt-4">
+                                <Link
+                                    href="/admin"
+                                    className="rounded-xl bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700"
+                                >
+                                    Ouvrir le dashboard admin
+                                </Link>
                             </div>
                         </div>
                     )}

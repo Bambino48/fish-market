@@ -2,20 +2,39 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Send, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { Send, Loader2} from "lucide-react";
+import { toast } from "sonner";
 
 type ReplyMessageFormProps = {
     conversationId: number;
+    currentUserName: string;
+    currentUserProfileImageUrl?: string | null;
 };
+
+function getInitials(name?: string | null) {
+    if (!name) return "FM";
+
+    const parts = name.trim().split(" ").filter(Boolean);
+
+    if (parts.length === 1) {
+        return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+}
 
 export default function ReplyMessageForm({
     conversationId,
+    currentUserName,
+    currentUserProfileImageUrl,
 }: ReplyMessageFormProps) {
     const router = useRouter();
 
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
+
+    const initials = getInitials(currentUserName);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -23,12 +42,11 @@ export default function ReplyMessageForm({
         const trimmedContent = content.trim();
 
         if (!trimmedContent) {
-            setMessage("Le message ne peut pas être vide.");
+            toast.error("Le message ne peut pas être vide.");
             return;
         }
 
         setLoading(true);
-        setMessage("");
 
         try {
             const res = await fetch(`/api/conversations/${conversationId}/messages`, {
@@ -44,16 +62,16 @@ export default function ReplyMessageForm({
             const data = await res.json();
 
             if (!res.ok) {
-                setMessage(data.error || "Erreur lors de l'envoi.");
+                toast.error(data.error || "Erreur lors de l'envoi.");
                 return;
             }
 
             setContent("");
-            setMessage("Message envoyé.");
+            toast.success("Message envoyé.");
             router.refresh();
         } catch (error) {
             console.error(error);
-            setMessage("Erreur réseau.");
+            toast.error("Erreur réseau.");
         } finally {
             setLoading(false);
         }
@@ -62,57 +80,72 @@ export default function ReplyMessageForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5"
+            className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
         >
-            <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-800">
-                    Répondre à la conversation
-                </h3>
-
-                <span className="text-xs text-slate-500">
-                    {content.length}/500
-                </span>
-            </div>
-
-            <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Écrivez votre réponse..."
-                maxLength={500}
-                className="mt-4 w-full resize-none rounded-xl border border-slate-300 bg-white p-3 text-sm outline-none transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-                rows={4}
-                disabled={loading}
-            />
-
-            <div className="mt-4 flex items-center justify-between">
-                {message && (
-                    <p
-                        className={`text-sm ${message === "Message envoyé."
-                                ? "text-emerald-600"
-                                : "text-red-600"
-                            }`}
-                    >
-                        {message}
-                    </p>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="ml-auto inline-flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Envoi...
-                        </>
+            <div className="flex items-start gap-4">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-sky-100 ring-1 ring-slate-200">
+                    {currentUserProfileImageUrl ? (
+                        <Image
+                            src={currentUserProfileImageUrl}
+                            alt={currentUserName || "Photo de profil"}
+                            fill
+                            className="object-cover"
+                        />
                     ) : (
-                        <>
-                            <Send className="h-4 w-4" />
-                            Envoyer
-                        </>
+                        <div className="flex h-full w-full items-center justify-center text-sm font-bold text-sky-700">
+                            {initials}
+                        </div>
                     )}
-                </button>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h3 className="text-base font-semibold text-slate-900">
+                                Répondre à la conversation
+                            </h3>
+                            <p className="mt-1 text-sm text-slate-500">
+                                Connecté en tant que {currentUserName}
+                            </p>
+                        </div>
+
+                        <span className="text-xs font-medium text-slate-400">
+                            {content.length}/500
+                        </span>
+                    </div>
+
+                    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                        <textarea
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            placeholder="Écrivez votre réponse..."
+                            maxLength={500}
+                            rows={4}
+                            disabled={loading}
+                            className="w-full resize-none bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                        />
+                    </div>
+
+                    <div className="mt-4 flex justify-end">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="inline-flex items-center gap-2 rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Envoi...
+                                </>
+                            ) : (
+                                <>
+                                    <Send className="h-4 w-4" />
+                                    Envoyer
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     );

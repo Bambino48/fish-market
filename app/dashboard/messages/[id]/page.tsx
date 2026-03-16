@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/getCurrentUser";
 import { prisma } from "@/lib/prisma";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import ReplyMessageForm from "../../../components/messages/ReplyMessageForm";
 import {
     ArrowLeft,
@@ -25,6 +26,18 @@ function formatMessageDate(date: Date) {
         hour: "2-digit",
         minute: "2-digit",
     }).format(date);
+}
+
+function getInitials(name?: string | null) {
+    if (!name) return "FM";
+
+    const parts = name.trim().split(" ").filter(Boolean);
+
+    if (parts.length === 1) {
+        return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
 export default async function ConversationPage({
@@ -161,11 +174,28 @@ export default async function ConversationPage({
                                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                                         Acheteur
                                     </p>
-                                    <div className="mt-3 space-y-3 text-sm">
-                                        <p className="inline-flex items-center gap-2 text-slate-700">
-                                            <UserRound className="h-4 w-4 text-slate-500" />
-                                            {conversation.buyer.name}
-                                        </p>
+                                    <div className="mt-3 flex items-center gap-3">
+                                        <div className="relative h-12 w-12 overflow-hidden rounded-2xl bg-sky-100 ring-1 ring-slate-200">
+                                            {conversation.buyer.profileImageUrl ? (
+                                                <Image
+                                                    src={conversation.buyer.profileImageUrl}
+                                                    alt={conversation.buyer.name || "Photo de profil"}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center text-sm font-bold text-sky-700">
+                                                    {getInitials(conversation.buyer.name)}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1 text-sm">
+                                            <p className="inline-flex items-center gap-2 text-slate-700">
+                                                <UserRound className="h-4 w-4 text-slate-500" />
+                                                {conversation.buyer.name}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -173,15 +203,33 @@ export default async function ConversationPage({
                                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                                         Vendeur
                                     </p>
-                                    <div className="mt-3 space-y-3 text-sm">
-                                        <p className="inline-flex items-center gap-2 text-slate-700">
-                                            <Store className="h-4 w-4 text-slate-500" />
-                                            {conversation.seller.name}
-                                        </p>
-                                        <p className="inline-flex items-center gap-2 text-slate-700">
-                                            <Phone className="h-4 w-4 text-slate-500" />
-                                            {conversation.seller.phone}
-                                        </p>
+
+                                    <div className="mt-3 flex items-start gap-3">
+                                        <div className="relative h-12 w-12 overflow-hidden rounded-2xl bg-emerald-100 ring-1 ring-slate-200">
+                                            {conversation.seller.profileImageUrl ? (
+                                                <Image
+                                                    src={conversation.seller.profileImageUrl}
+                                                    alt={conversation.seller.name || "Photo de profil"}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center text-sm font-bold text-emerald-700">
+                                                    {getInitials(conversation.seller.name)}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-3 text-sm">
+                                            <p className="inline-flex items-center gap-2 text-slate-700">
+                                                <Store className="h-4 w-4 text-slate-500" />
+                                                {conversation.seller.name}
+                                            </p>
+                                            <p className="inline-flex items-center gap-2 text-slate-700">
+                                                <Phone className="h-4 w-4 text-slate-500" />
+                                                {conversation.seller.phone}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -220,12 +268,30 @@ export default async function ConversationPage({
                                 ) : (
                                     conversation.messages.map((msg) => {
                                         const isMine = msg.senderId === user.id;
+                                        const senderInitials = getInitials(msg.sender.name);
 
                                         return (
                                             <div
                                                 key={msg.id}
-                                                className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+                                                className={`flex items-end gap-3 ${isMine ? "justify-end" : "justify-start"}`}
                                             >
+                                                {!isMine && (
+                                                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-sky-100 ring-1 ring-slate-200">
+                                                        {msg.sender.profileImageUrl ? (
+                                                            <Image
+                                                                src={msg.sender.profileImageUrl}
+                                                                alt={msg.sender.name || "Photo de profil"}
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-full w-full items-center justify-center text-xs font-bold text-sky-700">
+                                                                {senderInitials}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
                                                 <div
                                                     className={`max-w-[85%] rounded-3xl px-4 py-3 shadow-sm sm:max-w-[75%] ${isMine
                                                             ? "bg-sky-600 text-white"
@@ -248,6 +314,23 @@ export default async function ConversationPage({
                                                         {formatMessageDate(msg.createdAt)}
                                                     </div>
                                                 </div>
+
+                                                {isMine && (
+                                                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-sky-100 ring-1 ring-slate-200">
+                                                        {msg.sender.profileImageUrl ? (
+                                                            <Image
+                                                                src={msg.sender.profileImageUrl}
+                                                                alt={msg.sender.name || "Photo de profil"}
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-full w-full items-center justify-center text-xs font-bold text-sky-700">
+                                                                {senderInitials}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         );
                                     })
@@ -255,7 +338,11 @@ export default async function ConversationPage({
                             </div>
                         </div>
 
-                        <ReplyMessageForm conversationId={conversation.id} />
+                         <ReplyMessageForm
+                            conversationId={conversation.id}
+                            currentUserName={user.name}
+                            currentUserProfileImageUrl={user.profileImageUrl}
+                        />
                     </section>
                 </div>
             </section>

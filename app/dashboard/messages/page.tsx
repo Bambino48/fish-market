@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/getCurrentUser";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
     ArrowLeft,
     FishSymbol,
@@ -139,9 +140,7 @@ export default async function MessagesPage() {
                                             ? "Acheteur"
                                             : "Utilisateur"}
                                 </p>
-                                <p className="mt-1 text-sm text-slate-600">
-                                    connecté
-                                </p>
+                                <p className="mt-1 text-sm text-slate-600">connecté</p>
                             </div>
 
                             <div className="rounded-2xl bg-slate-50 p-4">
@@ -151,9 +150,7 @@ export default async function MessagesPage() {
                                 <p className="mt-2 text-base font-bold text-slate-900">
                                     Messages
                                 </p>
-                                <p className="mt-1 text-sm text-slate-600">
-                                    centralisés
-                                </p>
+                                <p className="mt-1 text-sm text-slate-600">centralisés</p>
                             </div>
                         </div>
                     </div>
@@ -264,8 +261,19 @@ export default async function MessagesPage() {
                                     >
                                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                             <div className="flex min-w-0 items-start gap-4">
-                                                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-base font-bold text-sky-700">
-                                                    {initials}
+                                                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-sky-100 ring-1 ring-slate-200">
+                                                    {otherUser.profileImageUrl ? (
+                                                        <Image
+                                                            src={otherUser.profileImageUrl}
+                                                            alt={otherUser.name || "Photo de profil"}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="flex h-full w-full items-center justify-center text-base font-bold text-sky-700">
+                                                            {initials}
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 <div className="min-w-0">

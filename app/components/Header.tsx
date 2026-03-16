@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/getCurrentUser";
-import LogoutButton from "./LogoutButton";
-import { FishSymbol, LayoutDashboard, LogIn, UserPlus } from "lucide-react";
+import {
+    FishSymbol,
+    LayoutDashboard,
+    LogIn,
+    UserPlus,
+} from "lucide-react";
+import UserMenu from "./UserMenu";
 
 export default async function Header() {
     const user = await getCurrentUser();
@@ -52,12 +57,14 @@ export default async function Header() {
                     </nav>
 
                     {user ? (
-                        <div className="flex items-center gap-3">
-                            <div className="hidden rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-medium text-slate-700 sm:block">
-                                {user.name}
-                            </div>
-                            <LogoutButton />
-                        </div>
+                        <UserMenu
+                            user={{
+                                name: user.name,
+                                email: "email" in user ? user.email ?? "" : "",
+                                role: user.role,
+                                profileImageUrl: user.profileImageUrl ?? "",
+                            }}
+                        />
                     ) : (
                         <div className="flex items-center gap-2">
                             <Link

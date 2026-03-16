@@ -27,6 +27,18 @@ type FishDetailPageProps = {
     }>;
 };
 
+function getInitials(name?: string | null) {
+    if (!name) return "FM";
+
+    const parts = name.trim().split(" ").filter(Boolean);
+
+    if (parts.length === 1) {
+        return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
 export default async function FishDetailPage({ params }: FishDetailPageProps) {
     const { id } = await params;
 
@@ -50,6 +62,7 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
     }
 
     const user = await getCurrentUser();
+    const sellerInitials = getInitials(fish.seller.name);
 
     return (
         <main className="bg-slate-50">
@@ -193,35 +206,61 @@ export default async function FishDetailPage({ params }: FishDetailPageProps) {
                                 </div>
                             </div>
 
-                            <div className="mt-6 grid gap-3 rounded-3xl bg-slate-50 p-5">
-                                <div className="flex items-center justify-between gap-3">
-                                    <span className="inline-flex items-center gap-2 text-slate-500">
-                                        <UserRound className="h-4 w-4" />
-                                        Vendeur
-                                    </span>
-                                    <span className="font-semibold text-slate-900">
-                                        {fish.seller.name}
-                                    </span>
+                            <div className="mt-6 rounded-3xl bg-slate-50 p-5">
+                                <div className="mb-5 flex items-center gap-4">
+                                    <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-sky-100 text-base font-bold text-sky-700 ring-1 ring-slate-200">
+                                        {fish.seller.profileImageUrl ? (
+                                            <Image
+                                                src={fish.seller.profileImageUrl}
+                                                alt={fish.seller.name || "Vendeur"}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            sellerInitials
+                                        )}
+                                    </div>
+
+                                    <div className="min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <p className="truncate text-lg font-semibold text-slate-900">
+                                                {fish.seller.name}
+                                            </p>
+
+                                            {fish.seller.isVerified && (
+                                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                                                    <BadgeCheck className="h-3.5 w-3.5" />
+                                                    Vendeur vérifié
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <p className="mt-1 text-sm text-slate-500">
+                                            Vendeur Fish Market
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center justify-between gap-3">
-                                    <span className="inline-flex items-center gap-2 text-slate-500">
-                                        <Phone className="h-4 w-4" />
-                                        Téléphone
-                                    </span>
-                                    <span className="font-semibold text-slate-900">
-                                        {fish.seller.phone}
-                                    </span>
-                                </div>
+                                <div className="grid gap-3">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <span className="inline-flex items-center gap-2 text-slate-500">
+                                            <Phone className="h-4 w-4" />
+                                            Téléphone
+                                        </span>
+                                        <span className="font-semibold text-slate-900">
+                                            {fish.seller.phone}
+                                        </span>
+                                    </div>
 
-                                <div className="flex items-center justify-between gap-3">
-                                    <span className="inline-flex items-center gap-2 text-slate-500">
-                                        <MapPin className="h-4 w-4" />
-                                        Ville
-                                    </span>
-                                    <span className="font-semibold text-slate-900">
-                                        {fish.seller.city || "Non renseignée"}
-                                    </span>
+                                    <div className="flex items-center justify-between gap-3">
+                                        <span className="inline-flex items-center gap-2 text-slate-500">
+                                            <MapPin className="h-4 w-4" />
+                                            Ville
+                                        </span>
+                                        <span className="font-semibold text-slate-900">
+                                            {fish.seller.city || "Non renseignée"}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

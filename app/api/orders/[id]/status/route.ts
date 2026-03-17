@@ -8,7 +8,7 @@ type RouteContext = {
     }>;
 };
 
-const ALLOWED_STATUSES = ["CONFIRMED", "CANCELLED"] as const;
+const ALLOWED_STATUSES = ["CONFIRMED", "CANCELLED", "COMPLETED"] as const;
 type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 
 export async function PATCH(req: Request, { params }: RouteContext) {
@@ -70,11 +70,22 @@ export async function PATCH(req: Request, { params }: RouteContext) {
             );
         }
 
-        if (order.status !== "PENDING") {
-            return NextResponse.json(
-                { error: "Cette commande a déjà été traitée." },
-                { status: 400 }
-            );
+        if (status === "CONFIRMED" || status === "CANCELLED") {
+            if (order.status !== "PENDING") {
+                return NextResponse.json(
+                    { error: "Cette commande a déjà été traitée." },
+                    { status: 400 }
+                );
+            }
+        }
+
+        if (status === "COMPLETED") {
+            if (order.status !== "CONFIRMED") {
+                return NextResponse.json(
+                    { error: "Seules les commandes confirmées peuvent être marquées comme terminées." },
+                    { status: 400 }
+                );
+            }
         }
 
         const result = await prisma.$transaction(async (tx) => {
@@ -102,7 +113,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
                 message:
                     status === "CONFIRMED"
                         ? "Commande confirmée avec succès."
-                        : "Commande annulée avec succès.",
+                        : status === "CANCELLED"
+                            ? "Commande annulée avec succès."
+                            : "Commande marquée comme terminée avec succès.",
                 order: result,
             },
             { status: 200 }

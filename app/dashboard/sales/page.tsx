@@ -298,11 +298,11 @@ export default async function SellerSalesPage() {
                                         </div>
                                     </div>
 
-                                    {order.status === "PENDING" ? (
+                                    {(order.status === "PENDING" || order.status === "CONFIRMED") ? (
                                         <OrderStatusActions orderId={order.id} />
                                     ) : (
                                         <div className="mt-5 rounded-3xl bg-slate-50 p-4 text-sm leading-6 text-slate-500">
-                                            Cette commande a déjà été traitée.
+                                            Cette commande a déjà été finalisée.
                                         </div>
                                     )}
 

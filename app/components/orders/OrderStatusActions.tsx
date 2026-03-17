@@ -14,10 +14,10 @@ export default function OrderStatusActions({
 }: OrderStatusActionsProps) {
     const router = useRouter();
     const [loadingStatus, setLoadingStatus] = useState<
-        "CONFIRMED" | "CANCELLED" | null
+        "CONFIRMED" | "CANCELLED" | "COMPLETED" | null
     >(null);
 
-    async function updateStatus(status: "CONFIRMED" | "CANCELLED") {
+    async function updateStatus(status: "CONFIRMED" | "CANCELLED" | "COMPLETED") {
         setLoadingStatus(status);
 
         try {
@@ -40,7 +40,9 @@ export default function OrderStatusActions({
             toast.success(
                 status === "CONFIRMED"
                     ? "Commande confirmée."
-                    : "Commande annulée."
+                    : status === "CANCELLED"
+                        ? "Commande annulée."
+                        : "Commande marquée comme terminée."
             );
 
             router.refresh();
@@ -91,6 +93,24 @@ export default function OrderStatusActions({
                         <>
                             <XCircle className="h-4 w-4" />
                             Refuser
+                        </>
+                    )}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => updateStatus("COMPLETED")}
+                    disabled={isLoading}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                    {loadingStatus === "COMPLETED" ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Finalisation...
+                        </>
+                    ) : (
+                        <>
+                            <CheckCircle2 className="h-4 w-4" />
+                            Terminer
                         </>
                     )}
                 </button>

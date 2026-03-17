@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import OrderStatusBadge from "../../components/orders/OrderStatusBadge";
+import BuyerOrderActions from "../../components/orders/BuyerOrderActions";
 import {
     ArrowLeft,
     ClipboardList,
@@ -282,6 +283,19 @@ export default async function BuyerOrdersPage() {
                                             </span>
                                         </div>
                                     </div>
+
+                                    {order.status === "PENDING" && (
+                                        <BuyerOrderActions
+                                            orderId={order.id}
+                                            currentQuantity={order.quantity}
+                                        />
+                                    )}
+
+                                    {order.status !== "PENDING" && (
+                                        <div className="mt-5 rounded-3xl bg-slate-50 p-4 text-sm leading-6 text-slate-500">
+                                            Cette commande ne peut plus être modifiée car elle a déjà été traitée.
+                                        </div>
+                                    )}
 
                                     <div className="mt-5 flex items-center justify-between gap-3">
                                         <span className="text-xs font-medium text-slate-400">

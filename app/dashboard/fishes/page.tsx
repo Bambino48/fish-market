@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import FishActions from "../../components/fishes/FishActions";
 import {
     ArrowLeft,
     BadgeCheck,
@@ -263,8 +264,8 @@ export default async function SellerFishesPage() {
 
                                             <span
                                                 className={`inline-flex shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold ${fish.available
-                                                        ? "bg-emerald-50 text-emerald-700"
-                                                        : "bg-slate-100 text-slate-600"
+                                                    ? "bg-emerald-50 text-emerald-700"
+                                                    : "bg-slate-100 text-slate-600"
                                                     }`}
                                             >
                                                 {fish.available ? "Disponible" : "Indisponible"}
@@ -316,6 +317,19 @@ export default async function SellerFishesPage() {
                                                 Voir détail
                                             </Link>
                                         </div>
+
+                                        <FishActions
+                                            fishId={fish.id}
+                                            currentAvailable={fish.available}
+                                            title={fish.title}
+                                            species={fish.species}
+                                            description={fish.description}
+                                            price={fish.price}
+                                            quantity={fish.quantity}
+                                            unit={fish.unit}
+                                            imageUrl={fish.imageUrl}
+                                            location={fish.location}
+                                        />
                                     </div>
                                 </article>
                             ))}

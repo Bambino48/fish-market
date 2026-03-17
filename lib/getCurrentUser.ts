@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 
 export async function getCurrentUser() {
-
     const sessionUser = await getSessionUser();
 
     if (!sessionUser || !sessionUser.id) {
@@ -19,7 +18,9 @@ export async function getCurrentUser() {
             role: true,
             city: true,
             profileImageUrl: true,
-        }
+            isVerified: true,
+            verificationStatus: true,
+        },
     });
 
     return user;

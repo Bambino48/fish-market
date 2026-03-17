@@ -10,6 +10,7 @@ import {
   MessageCircle,
   ArrowLeft,
   ShieldCheck,
+  BadgeCheck,
 } from "lucide-react";
 
 const links = [
@@ -37,6 +38,11 @@ const links = [
     href: "/admin/conversations",
     label: "Conversations",
     icon: MessageCircle,
+  },
+  {
+    href: "/admin/verifications",
+    label: "Vérifications",
+    icon: BadgeCheck,
   },
 ];
 
@@ -66,11 +72,10 @@ export default function AdminSidebar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                  active
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${active
                     ? "bg-sky-50 text-sky-700"
                     : "text-slate-700 hover:bg-slate-100"
-                }`}
+                  }`}
               >
                 <Icon className="h-4 w-4" />
                 {link.label}

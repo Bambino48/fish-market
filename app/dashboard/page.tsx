@@ -112,6 +112,11 @@ function getRoleContent(role: string): RoleContent {
             label: "Messages",
             icon: MessageCircle,
           },
+          {
+            href: "/dashboard/verification",
+            label: "Vérification vendeur",
+            icon: ShieldCheck,
+          },
         ],
         cards: [
           {
@@ -158,12 +163,24 @@ function getRoleContent(role: string): RoleContent {
             border: "hover:border-violet-300 hover:bg-violet-50",
             cta: "Ouvrir →",
           },
+          {
+            href: "/dashboard/verification",
+            label: "Vérification vendeur",
+            description:
+              "Soumettez vos documents et suivez le statut de validation de votre compte vendeur.",
+            icon: ShieldCheck,
+            color: "text-purple-700",
+            bg: "bg-purple-100",
+            border: "hover:border-purple-300 hover:bg-purple-50",
+            cta: "Vérifier →",
+          },
         ],
         recommendationsTitle: "Recommandations vendeur",
         recommendations: [
           "Ajoutez des annonces claires avec des informations complètes.",
           "Vérifiez régulièrement vos commandes reçues.",
           "Répondez rapidement aux messages des acheteurs.",
+          "Complétez votre vérification vendeur pour renforcer la confiance.",
         ],
       };
 
@@ -397,7 +414,9 @@ export default async function DashboardPage() {
                     className={
                       action.primary
                         ? "inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-sky-700 transition hover:bg-slate-100"
-                        : "inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                        : action.href === "/dashboard/verification"
+                          ? "inline-flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 font-medium text-white transition hover:bg-purple-700"
+                          : "inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
                     }
                   >
                     <Icon className="h-4 w-4" />
@@ -557,6 +576,16 @@ export default async function DashboardPage() {
               <UserRound className="h-4 w-4" />
               Gérer mon profil
             </Link>
+
+            {isSeller && (
+              <Link
+                href="/dashboard/verification"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-purple-700"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Vérification vendeur
+              </Link>
+            )}
 
             <div className="w-full rounded-3xl border border-dashed border-slate-300 bg-slate-50/70 p-5">
               <p className="text-lg font-semibold text-slate-900">Conseil rapide</p>
